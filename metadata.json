@@ -1,0 +1,6 @@
+{
+  "name": "Anushka's Player",
+  "description": "Premium mobile music player interface and ESP32 RETROTAPE wireless controller.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

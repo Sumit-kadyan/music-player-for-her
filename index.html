@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Anushka's Player — RETROTAPE</title>
+  <meta name="description" content="Industrial Dark Mobile Player Controller for RETROTAPE ESP32 & DFPlayer Mini." />
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+
+  <!-- Main App Shell -->
+  <div id="app" class="app-container">
+
+    <!-- Top Navigation Header -->
+    <header class="top-bar">
+      <div class="brand-group">
+        <div class="brand-icon">
+          <!-- Geometric Diamond/Spark Glyph matching image top left -->
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2L15 9L22 12L15 15L12 22L9 15L2 12L9 9L12 2Z"></path>
+          </svg>
+        </div>
+        <h1 id="topBarTitle" class="app-title">Anushka's Player</h1>
+      </div>
+
+      <!-- Connection Pill Badge -->
+      <div id="connectionPill" class="connection-pill state-connecting" title="Click for ESP32 connection details">
+        <span class="pill-dot"></span>
+        <span id="pillText" class="pill-text">CONNECTING...</span>
+        <span id="pillIp" class="pill-ip">192.168.4.1</span>
+      </div>
+    </header>
+
+    <!-- Global Toast Notification Banner -->
+    <div id="toast" class="toast hidden" role="alert">
+      <span id="toastMessage" class="toast-message">Connecting to RETROTAPE ESP32...</span>
+    </div>
+
+    <!-- Main Viewport Content -->
+    <main class="content-viewport">
+
+      <!-- ========================================== -->
+      <!-- SECTION 1: PLAYER SCREEN (DEFAULT)         -->
+      <!-- ========================================== -->
+      <section id="view-player" class="app-view view-active">
+        
+        <!-- Stark Brutalist Geometric Album Art Canvas -->
+        <div class="album-card">
+          <div class="album-art-wrapper">
+            <div class="brutalist-art-canvas">
+              <div class="art-shapes-group">
+                <div class="shape-pillar"></div>
+                <div class="shape-circle"></div>
+                <div class="shape-triangle"></div>
+                <div class="shape-block-gray"></div>
+              </div>
+            </div>
+            <div class="art-text-block">
+              <h3 id="artCanvasTitle" class="art-main-title">VESSEL</h3>
+              <p id="artCanvasSub" class="art-sub-title">STRUCTURES & FORM</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Track Header -->
+        <div class="track-header">
+          <div class="track-meta">
+            <h2 id="currentTrackTitle" class="track-title">Vessel</h2>
+            <p id="currentTrackArtist" class="track-artist">Structures & Form</p>
+          </div>
+          <button id="favoriteBtn" class="btn-ctrl-icon" aria-label="Favorite track" title="Toggle favorite">
+            <svg id="favHeartIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Progress Bar (Thin Amber Pip) -->
+        <div class="progress-container">
+          <div id="progressTrackBg" class="progress-track-bg">
+            <div id="progressBarFill" class="progress-track-fill"></div>
+            <div id="progressHeadPip" class="progress-thumb-pip"></div>
+          </div>
+          <div class="progress-timestamps">
+            <span id="tapePosText">02:14</span>
+            <span id="tapeDurationText">04:38</span>
+          </div>
+        </div>
+
+        <!-- Main Controls Row -->
+        <div class="player-controls-row">
+          <!-- Shuffle / Mode button -->
+          <button id="btnShuffle" class="btn-ctrl-icon" aria-label="Shuffle mode">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"></path>
+            </svg>
+          </button>
+
+          <!-- Previous Track Card -->
+          <button id="prevBtn" class="btn-ctrl-card" aria-label="Previous Track">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="19 20 9 12 19 4 19 20"></polygon>
+              <line x1="5" y1="19" x2="5" y2="5" stroke="currentColor" stroke-width="2"></line>
+            </svg>
+          </button>
+
+          <!-- Stark White Play / Pause Block Button -->
+          <button id="playPauseBtn" class="btn-play-block" aria-label="Play or Pause">
+            <svg id="playIcon" class="ctrl-icon hidden" width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="6 3 20 12 6 21 6 3"></polygon>
+            </svg>
+            <svg id="pauseIcon" class="ctrl-icon" width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+              <rect x="6" y="4" width="4" height="16" rx="1"></rect>
+              <rect x="14" y="4" width="4" height="16" rx="1"></rect>
+            </svg>
+          </button>
+
+          <!-- Next Track Card -->
+          <button id="nextBtn" class="btn-ctrl-card" aria-label="Next Track">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="5 4 15 12 5 20 5 4"></polygon>
+              <line x1="19" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="2"></line>
+            </svg>
+          </button>
+
+          <!-- Repeat / Order button -->
+          <button id="btnRepeat" class="btn-ctrl-icon active-orange" aria-label="Repeat mode">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 2l4 4-4 4"></path>
+              <path d="M3 11v-1a4 4 0 0 1 4-4h14"></path>
+              <path d="M7 22l-4-4 4-4"></path>
+              <path d="M21 13v1a4 4 0 0 1-4 4H3"></path>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Mini Volume Strip -->
+        <div class="mini-volume-row">
+          <button id="quickMuteBtn" class="btn-ctrl-icon" aria-label="Mute or unmute">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+              <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            </svg>
+          </button>
+          
+          <input id="quickVolSlider" type="range" min="0" max="30" value="18" class="vol-slider-mini" aria-label="Volume level" />
+          
+          <span id="quickVolValText" class="vol-percent-text">60%</span>
+        </div>
+
+        <!-- Integrated Queue / Track List (Matching Image) -->
+        <div class="queue-section">
+          <div class="queue-header-row">
+            <div class="queue-title-group">
+              <span class="queue-label">QUEUE</span>
+              <span class="queue-count-pill">20 Tracks</span>
+            </div>
+            <button id="btnOrder" class="btn-order">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <polyline points="19 12 12 19 5 12"></polyline>
+              </svg>
+              Order
+            </button>
+          </div>
+
+          <!-- Queue Search Box -->
+          <div class="search-input-box">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input id="queueSearchInput" type="text" placeholder="Search queue or artist..." />
+          </div>
+
+          <!-- Queue Items Container -->
+          <div id="queueListContainer" class="queue-list">
+            <!-- Populated dynamically in script.js -->
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ========================================== -->
+      <!-- SECTION 2: VOLUME & TACTILE ROTARY SCREEN  -->
+      <!-- ========================================== -->
+      <section id="view-volume" class="app-view hidden">
+        <div class="rotary-screen-header">
+          <span class="rotary-sub-tag">ACOUSTIC SIGNAL PROCESSING</span>
+          <h2 class="rotary-title">Master Output</h2>
+        </div>
+
+        <!-- Dark Square Tactile Knob Dial (Matching Image Right Panel) -->
+        <div class="rotary-dial-card">
+          <div class="rotary-gauge-wrapper">
+            <svg class="rotary-svg-ring" viewBox="0 0 200 200">
+              <circle class="ring-bg" cx="100" cy="100" r="82" />
+              <circle id="rotaryGaugeArc" class="ring-arc" cx="100" cy="100" r="82" stroke-dasharray="515" stroke-dashoffset="206" />
+            </svg>
+
+            <!-- Square Central Dark Knob -->
+            <div id="rotaryKnobBox" class="rotary-square-knob">
+              <div class="rotary-percent-display">
+                <span id="rotaryPercentText">78</span>
+                <span class="rotary-percent-symbol">%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="tactile-label-bar">
+            <span class="pill-dot" style="background: var(--color-amber);"></span>
+            <span>TACTILE ROTARY</span>
+          </div>
+        </div>
+
+        <!-- Tactile Button Grid: DEC / MUTE / INC -->
+        <div class="tactile-btn-row">
+          <button id="volDecBtn" class="tactile-card-btn">
+            <span class="tactile-symbol-lg">−</span>
+            <span class="tactile-btn-text">DEC</span>
+          </button>
+          
+          <button id="volMuteBtn" class="tactile-card-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+              <line x1="23" y1="9" x2="17" y2="15"></line>
+              <line x1="17" y1="9" x2="23" y2="15"></line>
+            </svg>
+            <span id="volMuteLabel" class="tactile-btn-text">MUTE</span>
+          </button>
+
+          <button id="volIncBtn" class="tactile-card-btn">
+            <span class="tactile-symbol-lg">+</span>
+            <span class="tactile-btn-text">INC</span>
+          </button>
+        </div>
+
+        <!-- Master Volume Range Slider -->
+        <div class="info-card">
+          <span class="cred-label">FINE VOLUME ADJUSTMENT</span>
+          <input id="masterVolSlider" type="range" min="0" max="30" value="18" class="vol-slider-mini" />
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- SECTION 3: SETTINGS & ESP32 CONNECT        -->
+      <!-- ========================================== -->
+      <section id="view-settings" class="app-view hidden">
+        <div class="rotary-screen-header">
+          <span class="rotary-sub-tag">RETROTAPE WIRELESS HARDWARE</span>
+          <h2 class="rotary-title">ESP32 Settings</h2>
+        </div>
+
+        <div class="info-card border-amber">
+          <span class="cred-label">ACCESS POINT CREDENTIALS</span>
+          <div class="credentials-grid">
+            <div class="cred-item">
+              <span class="cred-label">Wi-Fi SSID</span>
+              <strong class="cred-value">RetroTape</strong>
+            </div>
+            <div class="cred-item">
+              <span class="cred-label">Password</span>
+              <strong class="cred-value">RetroTape123</strong>
+            </div>
+            <div class="cred-item">
+              <span class="cred-label">Default IP</span>
+              <strong class="cred-value">192.168.4.1</strong>
+            </div>
+            <div class="cred-item">
+              <span class="cred-label">API Method</span>
+              <strong class="cred-value">HTTP REST</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- API Endpoint & Simulator Toggle -->
+        <div class="info-card">
+          <span class="cred-label">API BASE URL</span>
+          <div class="ip-config-group">
+            <input id="apiBaseInput" type="text" class="input-text" value="http://192.168.4.1" />
+            <button id="saveApiBtn" class="btn-primary-sm">SAVE</button>
+          </div>
+
+          <div class="toggle-row">
+            <div>
+              <strong style="font-size: 0.85rem;">Hardware Simulator Mode</strong>
+              <p style="font-size: 0.7rem; color: var(--text-muted);">Enable offline simulation for testing without ESP32 hardware.</p>
+            </div>
+            <label class="switch">
+              <input id="simulatorToggle" type="checkbox" />
+              <span class="slider round"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- State Diagnostics Table -->
+        <div class="info-card">
+          <span class="cred-label">HARDWARE STATE DIAGNOSTICS</span>
+          <div class="state-table">
+            <div class="state-row"><span>Connection:</span> <strong id="diagConnected" style="color: var(--color-amber);">false</strong></div>
+            <div class="state-row"><span>DFPlayer Ready:</span> <span id="diagPlayerReady">false</span></div>
+            <div class="state-row"><span>Active Track:</span> <span id="diagTrack">0</span></div>
+            <div class="state-row"><span>Filename:</span> <span id="diagFilename">None</span></div>
+            <div class="state-row"><span>Playback State:</span> <span id="diagPlaying">Paused</span></div>
+            <div class="state-row"><span>Volume Level:</span> <span id="diagVolume">18 / 30</span></div>
+            <div class="state-row"><span>Target IP:</span> <span id="diagIp">192.168.4.1</span></div>
+            <div class="state-row"><span>Last Sync:</span> <span id="diagLastSync">Never</span></div>
+          </div>
+          <button id="retryConnectBtn" class="btn-secondary-sm" style="padding: 10px 0; margin-top: 4px;">RECONNECT NOW</button>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Bottom Navigation Bar (3 Items: Player, Volume, Settings matching image) -->
+    <nav class="bottom-nav">
+      <button id="navBtnPlayer" class="nav-item nav-active" data-view="player">
+        <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="5 3 19 12 5 21 5 3"></polygon>
+        </svg>
+        <span class="nav-label">Player</span>
+      </button>
+
+      <button id="navBtnVolume" class="nav-item" data-view="volume">
+        <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="4" y1="21" x2="4" y2="14"></line>
+          <line x1="4" y1="10" x2="4" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12" y2="3"></line>
+          <line x1="20" y1="21" x2="20" y2="16"></line>
+          <line x1="20" y1="12" x2="20" y2="3"></line>
+          <line x1="1" y1="14" x2="7" y2="14"></line>
+          <line x1="9" y1="8" x2="15" y2="8"></line>
+          <line x1="17" y1="16" x2="23" y2="16"></line>
+        </svg>
+        <span class="nav-label">Volume</span>
+      </button>
+
+      <button id="navBtnSettings" class="nav-item" data-view="settings">
+        <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+        <span class="nav-label">Settings</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <script src="./script.js"></script>
+</body>
+</html>
